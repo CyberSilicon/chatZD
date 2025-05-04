@@ -1,13 +1,10 @@
-
-// model/user.model.ts
-import { Schema, model, Document } from 'mongoose';
-import { IProfile, ProfileSchema } from './profile.model';
+import { Schema, model, Document, Types } from 'mongoose';
 
 export interface IUser extends Document {
-  phoneNumber: string;
+  email: string;
   username?: string;
-  passwordHash: string;
-  profile: IProfile;
+  password: string;
+  profile: Types.ObjectId;
   lastSeen: Date;
   isOnline: boolean;
   createdAt: Date;
@@ -15,10 +12,10 @@ export interface IUser extends Document {
 
 const UserSchema = new Schema<IUser>(
   {
-    phoneNumber: { type: String, required: true, unique: true, trim: true, maxlength: 20 },
+    email: { type: String, required: true, unique: true, trim: true, maxlength: 50 },
     username: { type: String, unique: true, sparse: true, trim: true, maxlength: 32 },
-    passwordHash: { type: String, required: true },
-    profile: { type: ProfileSchema, required: true },
+    password: { type: String, required: true },
+    profile: { type: Schema.Types.ObjectId, ref: 'Profile', required: false },
     lastSeen: { type: Date, default: Date.now, index: true },
     isOnline: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now, immutable: true },
@@ -32,4 +29,4 @@ const UserSchema = new Schema<IUser>(
 
 UserSchema.index({ lastSeen: 1 });
 
-export const UserModel = model<IUser>('User', UserSchema);
+export const User = model<IUser>('User', UserSchema);
