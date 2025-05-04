@@ -8,8 +8,8 @@ import {
 
 const router = Router();
 
-router.get('/', getUserById);
-router.post('/register', createUser);
+router.get('/user', getUserById);
+router.post('/auth/register', createUser);
 router.put('/', updateUserById);
 router.delete('/', deleteUserById);
 
