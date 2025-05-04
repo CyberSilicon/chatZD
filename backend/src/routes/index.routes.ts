@@ -9,6 +9,6 @@ router.get('/', (req: any, res: any) => {
 });
 
 router.use('/profiles', profileRoutes);
-router.use('/users', userRoutes);
+router.use('/api/v1/auth', userRoutes);
 
 export default router;

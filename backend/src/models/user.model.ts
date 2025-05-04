@@ -5,7 +5,7 @@ import { IProfile, Profile } from './profile.model';
 export interface IUser extends Document {
   phoneNumber: string;
   username?: string;
-  passwordHash: string;
+  password: string;
   profile: IProfile;
   lastSeen: Date;
   isOnline: boolean;
@@ -16,8 +16,8 @@ const UserSchema = new Schema<IUser>(
   {
     phoneNumber: { type: String, required: true, unique: true, trim: true, maxlength: 20 },
     username: { type: String, unique: true, sparse: true, trim: true, maxlength: 32 },
-    passwordHash: { type: String, required: true },
-    profile: { type: Profile, required: true },
+    password: { type: String, required: true },
+    profile: { type: Profile, required: false },
     lastSeen: { type: Date, default: Date.now, index: true },
     isOnline: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now, immutable: true },
