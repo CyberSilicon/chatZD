@@ -8,7 +8,7 @@ import {
 
 const router = Router();
 
-router.get('/:id', getProfileById);
+router.get('/', getProfileById);
 router.post('/', createProfile);
 router.put('/', updateProfileById);
 router.delete('/', deleteProfileById);

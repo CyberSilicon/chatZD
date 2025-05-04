@@ -12,7 +12,7 @@ import { IProfile, Profile } from '../models/profile.model';
  */
 export const getProfileById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const { id } = req.body;
     const profile = await Profile.findById(id);
 
     if (!profile) {
