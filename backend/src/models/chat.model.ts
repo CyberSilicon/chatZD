@@ -13,6 +13,7 @@ export interface IChat extends Document {
   updatedAt: Date;
 }
 
+
 const ChatSchema = new Schema<IChat>(
   {
     type: { type: String, enum: ['private', 'group', 'channel'], required: true },
