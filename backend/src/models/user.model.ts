@@ -1,5 +1,3 @@
-
-// model/user.model.ts
 import { Schema, model, Document } from 'mongoose';
 import { IProfile, ProfileSchema } from './profile.model';
 
