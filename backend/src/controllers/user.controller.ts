@@ -27,33 +27,6 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
 };
 
 /**
- * Handles the creation of a new user.
- *
- * This function extracts user data from the request body, creates a new
- * user instance, saves it to the database, and returns the created user
- * in the response. If an error occurs during the process, it sends a 400 status
- * code with an error message.
- *
- * @param req - The HTTP request object, containing the user data in the body.
- * @param res - The HTTP response object, used to send the response back to the client.
- * @returns A promise that resolves to void.
- *
- * @throws Will send a 400 status code with an error message if the user creation fails.
- */
-export const createUser = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const userData: IUser = req.body;
-    const newUser = new User(userData);
-
-    await newUser.save();
-    res.status(201).json(newUser);
-  } catch (error) {
-    res.status(400).json({ message: 'Erreur lors de la création de l\'utilisateur', error });
-  }
-};
-
-
-/**
  * Updates a user by their ID with the provided updates.
  *
  * @param req - The HTTP request object containing the user ID and update data in the body.

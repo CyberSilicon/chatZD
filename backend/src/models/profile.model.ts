@@ -1,10 +1,11 @@
 // model/profile.model.ts
-import { model, Schema } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
 
 export interface IProfile {
   firstName: string;
   lastName?: string;
   bio?: string;
+  userId?: Types.ObjectId;
   avatarUrl?: string;
   privacyLastSeen: 'everyone' | 'contacts' | 'nobody';
   privacyPhoto: 'everyone' | 'contacts' | 'nobody';
@@ -15,6 +16,7 @@ const ProfileSchema = new Schema<IProfile>(
     firstName: { type: String, required: true, trim: true, maxlength: 64 },
     lastName: { type: String, trim: true, maxlength: 64 },
     bio: { type: String, maxlength: 500 },
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: false },
     avatarUrl: {
         type: String,
         default: '',
@@ -36,7 +38,7 @@ const ProfileSchema = new Schema<IProfile>(
       default: 'everyone',
     },
   },
-  { _id: false }
+  { _id: true, versionKey: false }
 );
 
 export const Profile = model<IProfile>('Profile', ProfileSchema);

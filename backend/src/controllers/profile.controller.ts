@@ -45,11 +45,13 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
   try {
     const profileData: IProfile = req.body;
     const newProfile = new Profile(profileData);
+    console.log('Creating profile:', newProfile);
 
     await newProfile.save();
     res.status(201).json(newProfile);
-  } catch (error) {
-    res.status(400).json({ message: 'Erreur lors de la création du profil', error });
+} catch ({ message }: any) {
+    console.error('Error creating profile:', message);
+    res.status(400).json({ message: 'Erreur lors de la création du profil' }); 
   }
 };
 
@@ -111,3 +113,22 @@ export const deleteProfileById = async (req: Request, res: Response): Promise<vo
     res.status(500).json({ message: 'Erreur serveur', error });
   }
 };
+
+
+
+// export const getcurrentUserProfile = async (req: Request, res: Response): Promise<void> => {
+//   try {
+//     const { id } = req.body;
+
+//     const deletedProfile = await Profile.findByIdAndDelete(id);
+
+//     if (!deletedProfile) {
+//       res.status(404).json({ message: 'Profil non trouvé' });
+//       return;
+//     }
+
+//     res.status(200).json({ message: 'Profil supprimé avec succès' });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Erreur serveur', error });
+//   }
+// };
