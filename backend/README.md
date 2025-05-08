@@ -44,20 +44,24 @@ You can obtain a JWT by registering a new user or logging in with an existing ac
 
         ```json
         {
-            "email": "test@example.com",
-            "username": "testuser",
-            "lastSeen": "2024-07-30T14:30:00.000Z",
-            "isOnline": false,
-            "createdAt": "2024-07-30T14:30:00.000Z",
-            "id": "66a9d4a0e5d1a3b2c8f90a1b"
+            "status": 201,
+            "message": "Utilisateur créé avec succès",
+            "user": {
+                "email": "test@example.com",
+                "username": "testuser",
+                "lastSeen": "2024-07-30T14:30:00.000Z",
+                "isOnline": false,
+                "createdAt": "2024-07-30T14:30:00.000Z",
+                "id": "66a9d4a0e5d1a3b2c8f90a1b"
+            }
         }
         ```
     *   **Error (400):** Returns an error message if the user creation fails.
 
         ```json
         {
-            "message": "Erreur lors de la création de l'utilisateur",
-            "error": {}
+            "status": 400,
+            "message": "Erreur lors de la création de l'utilisateur"
         }
         ```
 

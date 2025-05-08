@@ -20,17 +20,28 @@ import { ENV } from '../config/env';
  * @throws Will send a 400 status code with an error message if the user creation fails.
  */
 export const register = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const userData: IUser = req.body;
-      const newUser = new User(userData);
-  
-      await newUser.save();
-      res.status(201).json(newUser);
-    } catch (error) {
-      res.status(400).json({ message: 'Erreur lors de la création de l\'utilisateur', error });
-    }
-  };
-  
+  try {
+    const userData: IUser = req.body;
+    const newUser = new User(userData);
+
+    await newUser.save();
+    res.status(201).json({
+      status: 201,
+      message: 'Utilisateur créé avec succès',
+      user: newUser
+    });
+    res.status(201).json({
+      status: 500,
+      message: 'Une erreur interne est survenue'
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      status: 400,
+      message: error.message,
+    });
+  }
+};
+
 
 /**
  * Handles user login by verifying email and password, and returns a JWT token if successful.
