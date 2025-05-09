@@ -1,9 +1,6 @@
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 import { IUser, User } from '../models/user.model';
-import { ENV } from '../config/env';
-
+import { comparePassword, generateToken, hashPassword } from '../services/auth.service';
 
 /**
  * Handles the creation of a new user.
@@ -21,26 +18,54 @@ import { ENV } from '../config/env';
  */
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userData: IUser = req.body;
-    const newUser = new User(userData);
+    const { username, email, password } = req.body as IUser;
 
-    await newUser.save();
-    res.status(201).json({
-      status: 201,
-      message: 'Utilisateur créé avec succès',
-      user: newUser
+    // Validation des champs
+    if (!username || !email || !password) {
+      res.status(400).json({ message: 'All fields are required' });
+      return;
+    }
+    if (password.length < 6) {
+      res.status(400).json({ message: 'Password must be at least 6 characters' });
+      return;
+    }
+
+    const existing = await User.findOne({ email });
+    if (existing) {
+      res.status(400).json({ message: 'Email already exists' });
+      return;
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
     });
+    await newUser.save();
+
+    const token = generateToken({ userId: (newUser._id as string).toString(), email: newUser.email });
+
+    //Réponse token et éventuellement l'user (sanctuarisé)
     res.status(201).json({
-      status: 500,
-      message: 'Une erreur interne est survenue'
+      message: 'User successfully created',
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+      },
+      token // local storage ou l'envoyer dans un cookie httpOnly --> plus sécurisé mais pas accessible par le front, avoir !!
     });
   } catch (error: any) {
-    res.status(400).json({
-      status: 400,
-      message: error.message,
+    console.error('Register error:', error);
+    res.status(500).json({
+      message: 'An internal error occurred',
+      error: error.message,
     });
   }
 };
+
 
 
 /**
@@ -62,18 +87,17 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = comparePassword(password, user.password);
+
     if (!isMatch) {
       res.status(400).json({ message: "Email ou mot de passe incorrect." });
       return;
     }
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      ENV.JWT_SECRET,
-      { expiresIn: ENV.JWT_EXPIRES_IN }
-    );
 
+    // const token = jwt.sign({ id: user._id, email: user.email }, ENV.JWT_SECRET, { expiresIn: ENV.JWT_EXPIRES_IN });
+    const token = generateToken(user as any);
     res.status(200).json({ token, user });
+
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
