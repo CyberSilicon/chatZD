@@ -29,6 +29,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
 };
 
 
+
 /**
  * Handles user login by verifying email and password, and returns a JWT token if successful.
  *

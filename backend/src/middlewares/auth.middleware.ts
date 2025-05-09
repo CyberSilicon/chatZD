@@ -30,7 +30,7 @@ export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: 
   const token = req.header('Authorization')?.split(' ')[1];
 
   if (!token) {
-    res.status(401).json({ message: 'Accès refusé. Aucun token fourni.' });
+    res.status(401).json({ message: 'Unauthorized - No Token Provided ' });
     return;
   }
 
@@ -39,6 +39,6 @@ export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: 
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(400).json({ message: 'Token invalide.' });
+    res.status(400).json({ message: 'Unauthorized - Invalid Token' });
   }
 };
