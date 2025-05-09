@@ -30,10 +30,10 @@ export default function page() {
       const res = await SubmitNewUser(username, email, password)
 
       if (res?.status === 201) {
-        console.log("User created")
+        console.log("User created", res)
       } 
-    }catch (error) {
-      console.error("Error in handleSubmit: ", error)
+    }catch (error: any) {
+      console.error("Error in handleSubmit: ", error.message)
     }  
 
   }
