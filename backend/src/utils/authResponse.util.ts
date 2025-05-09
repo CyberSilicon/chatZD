@@ -27,14 +27,18 @@ export const sendError = (res: Response, error: any) => {
   } else if (error.name === "TokenExpiredError") {
     status = 401;
     message = "Token expiré.";
-  } else if (error.status && error.message) {
+  } 
+  // else if (password.length < 6) {
+  //   status = 401;
+  //   message = "Password must be at least 6 characters";
+  // } 
+  else if (error.status && error.message) {
     status = error.status;
     message = error.message;
   } else {
     status = 500;
     message = "Erreur interne du serveur";
   }
-
   res.status(status).json({
     status,
     message,
