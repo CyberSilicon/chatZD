@@ -3,37 +3,23 @@
 import RegisterForm from '@/components/auth/RegisterFrom'
 import React, { useState } from 'react'
 import { SubmitNewUser } from './actions'
+import { useFormHandler } from '@/hooks/useFormHandler'
 
 export default function page() {
-  const [formUserData, setFormUserData] = useState([
-    {
-      email: "",
-      password: "",
-      username: ""
-    }
-  ])
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormUserData((prevState) => {
-      return prevState.map((item) => {
-        return { ...item, [name]: value }
-      })
-    })
-    console.log(e.target.value)
-    return formUserData
-  }
+ 
+  const { formUserData, handleChange } = useFormHandler({
+    email: '',
+    username: '',
+    password: ''
+  })
 
   const handleSubmit = async () => {
     try {
-      const { username, email, password } = formUserData[0]
+      const { username, email, password } = formUserData
       const res = await SubmitNewUser(username, email, password)
-
-      if (res?.status === 201) {
-        console.log("User created", res)
-      } 
+      return res;
     }catch (error: any) {
-      console.error("Error in handleSubmit: ", error.message)
+      console.error("Failed to register ", error.message)
     }  
 
   }

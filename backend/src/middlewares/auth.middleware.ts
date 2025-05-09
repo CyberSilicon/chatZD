@@ -1,44 +1,78 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { ENV } from '../config/env';
 
-interface DecodedToken {
+// Type du contenu du token JWT
+export interface DecodedToken extends JwtPayload {
   id: string;
   email: string;
 }
 
-interface AuthenticatedRequest extends Request {
+// Étend l’objet Request pour ajouter `user`
+export interface AuthenticatedRequest extends Request {
   user?: DecodedToken;
 }
 
 /**
  * Middleware to authenticate a JSON Web Token (JWT) from the request headers.
- * 
- * This middleware checks for the presence of an 'Authorization' header in the request.
- * If the header is present, it extracts the token and verifies it using the secret key.
- * If the token is valid, the decoded token is attached to the request object as `req.user`.
- * If the token is missing or invalid, an appropriate error response is sent.
- * 
- * @param req - The incoming request object, extended to include an optional `user` property.
- * @param res - The response object.
- * @param next - The next middleware function in the stack.
- * 
- * @throws {401} If no token is provided in the 'Authorization' header.
- * @throws {400} If the provided token is invalid.
+ *
+ * - Checks for the 'Authorization' header.
+ * - Validates the JWT.
+ * - Attaches decoded payload to `req.user`.
+ *
+ * @throws 401 if no token is provided.
+ * @throws 403 if the token is invalid or expired.
  */
-export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
-  const token = req.header('Authorization')?.split(' ')[1];
+// Contenu attendu du token JWT
+export interface DecodedToken extends JwtPayload {
+  id: string;
+  email: string;
+}
 
-  if (!token) {
-    res.status(401).json({ message: 'Unauthorized - No Token Provided ' });
-    return;
+// Étend l’objet Request pour y ajouter le champ user
+export interface AuthenticatedRequest extends Request {
+  user?: DecodedToken;
+}
+
+/**
+ * Middleware pour authentifier une requête en vérifiant la présence
+ * et la validité d'un JWT dans l’en-tête Authorization.
+ *
+ * Si le token est valide, le payload décodé est rattaché à `req.user`.
+ * Sinon on renvoie une erreur HTTP appropriée.
+ */
+export const authenticateJWT = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  // Récupère le header Authorization
+  const authHeader = req.header('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res
+      .status(401)
+      .json({ message: 'Unauthorized - Invalid Authorization header format' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  // Vérifie que le secret est bien défini
+  if (!ENV.JWT_SECRET) {
+    console.error('[Auth] JWT_SECRET is not defined in environment');
+    return res
+      .status(500)
+      .json({ message: 'Internal server error - Misconfigured token secret' });
   }
 
   try {
+    // Vérifie et décode le token
     const decoded = jwt.verify(token, ENV.JWT_SECRET) as DecodedToken;
+    // Attache le payload décodé à la requête
     req.user = decoded;
     next();
-  } catch (error) {
-    res.status(400).json({ message: 'Unauthorized - Invalid Token' });
+  } catch (err) {
+    return res
+      .status(403)
+      .json({ message: 'Forbidden - Invalid or expired token' });
   }
 };

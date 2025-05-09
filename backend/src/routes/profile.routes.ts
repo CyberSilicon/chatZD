@@ -11,7 +11,7 @@ const router = Router();
 router.get('/profile', getProfileById);
 router.post('/profile', createProfile);
 router.put('/profile', updateProfileById);
-router.delete('/profile', deleteProfileById);
+router.delete('/profile' ,deleteProfileById);
 router.delete('/profile/me', deleteProfileById);
 
 export default router;

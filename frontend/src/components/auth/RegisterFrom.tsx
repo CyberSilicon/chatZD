@@ -37,7 +37,7 @@ export default function RegisterForm({formUserData, handleChange, handleSubmit}:
                         focus:outline-none focus:border-cyan-500 transition py-3 px-1 leading-snug"
                 name='username'
                 onChange={handleChange}
-                value={formUserData[0].username}
+                value={formUserData.username}
               />
               <label
                 htmlFor="username"
@@ -59,7 +59,7 @@ export default function RegisterForm({formUserData, handleChange, handleSubmit}:
                         focus:outline-none focus:border-cyan-500 transition py-3 px-1 leading-snug"
                 name='email'
                 onChange={handleChange}
-                value={formUserData[0].email}
+                value={formUserData.email}
               />
               <label
                 htmlFor="email"
@@ -81,7 +81,7 @@ export default function RegisterForm({formUserData, handleChange, handleSubmit}:
                         focus:outline-none focus:border-cyan-500 transition py-3 px-1 leading-snug"
                 name='password'
                 onChange={handleChange}
-                value={formUserData[0].password}
+                value={formUserData.password}
               />
               <label
                 htmlFor="password"
