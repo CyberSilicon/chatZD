@@ -4,20 +4,22 @@ import bcrypt from 'bcryptjs';
 import { IUser, User } from '../models/user.model';
 import { ENV } from '../config/env';
 
-
 /**
- * Handles the creation of a new user.
- *
- * This function extracts user data from the request body, creates a new
- * user instance, saves it to the database, and returns the created user
- * in the response. If an error occurs during the process, it sends a 400 status
- * code with an error message.
+ * Handles user registration by creating a new user in the database.
  *
  * @param req - The HTTP request object, containing the user data in the body.
- * @param res - The HTTP response object, used to send the response back to the client.
- * @returns A promise that resolves to void.
+ * @param res - The HTTP response object used to send the response.
+ * @returns A Promise that resolves to void.
  *
- * @throws Will send a 400 status code with an error message if the user creation fails.
+ * @throws {ValidationError} If the provided user data fails validation.
+ * @throws {MongoError} If a duplicate key error occurs (e.g., email or username already exists).
+ * @throws {Error} For any other internal server errors.
+ *
+ * HTTP Responses:
+ * - 201: User successfully created. Returns the created user object.
+ * - 422: Validation error. Returns the validation error details.
+ * - 409: Conflict error. Indicates duplicate email or username.
+ * - 500: Internal server error. Returns the error message.
  */
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -30,15 +32,30 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       message: 'Utilisateur créé avec succès',
       user: newUser
     });
-    res.status(201).json({
-      status: 500,
-      message: 'Une erreur interne est survenue'
-    });
   } catch (error: any) {
-    res.status(400).json({
-      status: 400,
-      message: error.message,
-    });
+    if (error.name === 'ValidationError') {
+      res.status(422).json({
+        status: 422,
+        message: 'Erreur de validation, veuillez vérifier les données fournies',
+        errors: error.errors,
+      });
+    } else if (error.code === 11000) {
+      const key = Object.keys(error.keyValue)[0];
+      const message = key === 'email' ? 'Adresse email déjà enregistrée' : 'Username déjà enregistré';
+      res.status(409).json({
+        status: 409,
+        message: message,
+        code: error.code
+      });
+    }
+     else {
+      console.error(error);
+      res.status(500).json({
+        status: 500,
+        message: 'Erreur interne du serveur',
+        error: error.message,
+      });
+    }
   }
 };
 
