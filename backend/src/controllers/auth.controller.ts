@@ -1,8 +1,6 @@
-import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import { IUser, User } from '../models/user.model';
-import { ENV } from '../config/env';
+import { NextFunction, Request, Response } from 'express';
+import { loginUser, registerUser } from '../services/auth.service';
+import { sendError, sendSuccess } from '../utils/authResponse.util';
 
 /**
  * Handles user registration by creating a new user in the database.
@@ -21,41 +19,12 @@ import { ENV } from '../config/env';
  * - 409: Conflict error. Indicates duplicate email or username.
  * - 500: Internal server error. Returns the error message.
  */
-export const register = async (req: Request, res: Response): Promise<void> => {
+export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const userData: IUser = req.body;
-    const newUser = new User(userData);
-
-    await newUser.save();
-    res.status(201).json({
-      status: 201,
-      message: 'Utilisateur créé avec succès',
-      user: newUser
-    });
-  } catch (error: any) {
-    if (error.name === 'ValidationError') {
-      res.status(422).json({
-        status: 422,
-        message: 'Erreur de validation, veuillez vérifier les données fournies',
-        errors: error.errors,
-      });
-    } else if (error.code === 11000) {
-      const key = Object.keys(error.keyValue)[0];
-      const message = key === 'email' ? 'Adresse email déjà enregistrée' : 'Username déjà enregistré';
-      res.status(409).json({
-        status: 409,
-        message: message,
-        code: error.code
-      });
-    }
-     else {
-      console.error(error);
-      res.status(500).json({
-        status: 500,
-        message: 'Erreur interne du serveur',
-        error: error.message,
-      });
-    }
+    const user: any = await registerUser(req.body);
+    sendSuccess(res, { user }, "Utilisateur créé avec succès", 201);
+  } catch (error) {
+    sendError(res, error);
   }
 };
 
@@ -72,26 +41,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
+    const { user, token } = await loginUser(email, password);
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      res.status(400).json({ message: "Email ou mot de passe incorrect." });
-      return;
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      res.status(400).json({ message: "Email ou mot de passe incorrect." });
-      return;
-    }
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      ENV.JWT_SECRET,
-      { expiresIn: ENV.JWT_EXPIRES_IN }
-    );
-
-    res.status(200).json({ token, user });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    sendSuccess(res, { token, user }, "Connexion réussie");
+  } catch (error) {
+    sendError(res, error);
   }
 };
