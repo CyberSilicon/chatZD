@@ -13,8 +13,6 @@ export const sendError = (res: Response, error: any) => {
   let message = "Erreur interne du serveur";
   const response: any = {};
   
-  console.log('response:......', res)
-  
   if (error.name === "ValidationError") {
     status = 422;
     message = "Erreur de validation, vérifiez les champs";
