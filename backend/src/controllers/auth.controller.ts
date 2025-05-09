@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { loginUser, registerUser } from '../services/auth.service';
 import { sendError, sendSuccess } from '../utils/authResponse.util';
 
@@ -19,7 +19,7 @@ import { sendError, sendSuccess } from '../utils/authResponse.util';
  * - 409: Conflict error. Indicates duplicate email or username.
  * - 500: Internal server error. Returns the error message.
  */
-export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const user: any = await registerUser(req.body);
     sendSuccess(res, { user }, "Utilisateur créé avec succès", 201);

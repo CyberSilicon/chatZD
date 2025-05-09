@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function LoginForm() {
+export default function LoginForm({formUserData, handleChange, handleLogin}: any) {
   return (
     <div className="min-h-screen  py-6 flex flex-col justify-center px-4 sm:px-6 lg:px-8 bg-black">
       <div className="relative py-3 max-w-md w-full mx-auto transform scale-95 sm:scale-100">
@@ -29,6 +29,9 @@ export default function LoginForm() {
                 placeholder="Email Address"
                 className="peer w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent
                         focus:outline-none focus:border-cyan-500 transition py-3 px-1 leading-snug"
+                name='email'
+                onChange={handleChange}
+                value={formUserData.email}
             />
             <label
                 htmlFor="email"
@@ -48,6 +51,9 @@ export default function LoginForm() {
                 placeholder="Password"
                 className="peer w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent
                         focus:outline-none focus:border-cyan-500 transition py-3 px-1 leading-snug"
+                name='password'
+                onChange={handleChange}
+                value={formUserData.password}
             />
             <label
                 htmlFor="password"
@@ -60,11 +66,10 @@ export default function LoginForm() {
             </div>
             
             {/* Submit */}
-            <button className="w-full bg-cyan-500 text-white rounded-md py-2 hover:bg-cyan-600 transition">
+            <button onClick={handleLogin} className="w-full bg-cyan-500 text-white rounded-md py-2 hover:bg-cyan-600 transition">
               Sign In
             </button>
          
-           
           </div>
         </div>
       </div>

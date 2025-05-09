@@ -45,7 +45,6 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
   try {
     const profileData: IProfile = req.body;
     const newProfile = new Profile(profileData);
-    console.log('Creating profile:', newProfile);
 
     await newProfile.save();
     res.status(201).json(newProfile);
