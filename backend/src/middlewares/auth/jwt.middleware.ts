@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { ENV } from '../config/env';
+import { ENV } from '../../config/env';
 
-// Type du contenu du token JWT
 export interface DecodedToken extends JwtPayload {
   id: string;
   email: string;
