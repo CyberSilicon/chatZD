@@ -17,7 +17,6 @@ export const handleGlobalErrors = (
   let status = 500;
   let message = "Une erreur interne est survenue.";
   const response: Record<string, any> = {};
-
   switch (true) {
     case err.name === "ValidationError":
       status = 422;

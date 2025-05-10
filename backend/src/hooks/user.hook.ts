@@ -1,6 +1,8 @@
 import { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { Profile } from '../models/profile.model';
+import { handleGlobalErrors } from '../middlewares/handleErrors.middleware';
+import { errorHandler } from '../utils/errors/errorHandler.util';
 
 /**
  * Validates the email format of the current context (`this`) using a regular expression.
@@ -13,7 +15,7 @@ import { Profile } from '../models/profile.model';
 export const validateEmail = function (this: any, next: any) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(this.email)) {
-    return next(new Error('Adresse email invalide.'));
+    return next(new errorHandler('Adresse email invalide.', 400));
   }
   next();
 };
@@ -28,9 +30,9 @@ export const validateEmail = function (this: any, next: any) {
  * indicating the allowed characters.
  */
 export const validateUsername = function (this: any, next: any) {
-  const usernameRegex = /^[a-zA-Z0-9_]+$/;
+  const usernameRegex = /^[a-zA-Z0-9_]{3,}$/;
   if (this.username && !usernameRegex.test(this.username)) {
-    return next(new Error("Le nom d'utilisateur est invalide. Il ne peut contenir que des lettres, chiffres et underscores."));
+    return next(new errorHandler("Le nom d'utilisateur est invalide. Il ne peut contenir que des lettres, chiffres et underscores.", 400));
   }
   next();
 };
@@ -50,10 +52,10 @@ export const validateUsername = function (this: any, next: any) {
  * @param next - The callback function to proceed to the next middleware or handle an error.
  * @throws {Error} If the password does not meet the required criteria.
  */
-export const validatePassword = function (this: any, next: any) {
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+export const validatePassword = function (this: any, next: any) { 
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
   if (!passwordRegex.test(this.password)) {
-    return next(new Error("Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial."));
+    return next(new errorHandler("Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial."), 400);
   }
   next();
 };
