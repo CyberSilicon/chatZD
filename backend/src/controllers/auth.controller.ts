@@ -22,7 +22,8 @@ import { sendError, sendSuccess } from '../utils/authResponse.util';
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const user: any = await registerUser(req.body);
-    sendSuccess(res, { user }, "Utilisateur créé avec succès", 201);
+    const login: any = await loginUser(req.body.email, req.body.password);
+    sendSuccess(res, login , "Utilisateur créé avec succès", 200);
   } catch (error) {
     sendError(res, error);
   }

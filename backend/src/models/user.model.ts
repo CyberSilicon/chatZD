@@ -69,9 +69,6 @@ const UserSchema = new Schema<IUser>(
   }
 );
 
-// Index pour les recherches par "lastSeen"
-UserSchema.index({ lastSeen: 1 });
-
 // Appliquer les hooks personnalisés
 applyUserHooks(UserSchema);
 

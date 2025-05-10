@@ -42,3 +42,4 @@ export const registerUser = async (userData: IUser) => {
   await newUser.save();
 
   return newUser;
+}
