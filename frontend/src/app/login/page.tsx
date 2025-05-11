@@ -1,12 +1,13 @@
 "use client"
-
 import React from 'react'
 import LoginForm from '@/components/auth/LoginForm'
-import { LoginUser } from './actions'
 import { useFormHandler } from '@/hooks/useFormHandler'
-
+import toast from 'react-hot-toast'
+import { Login } from '@/api/helper'
+import { useRouter } from 'next/navigation'
 
 export default function page( ) {
+  const router = useRouter();
 
   const { formUserData, handleChange } = useFormHandler({
     email: '',
@@ -16,10 +17,12 @@ export default function page( ) {
   const handleLogin = async () => {
     try {
       const { email, password } = formUserData
-      const res = await LoginUser(email, password)
-      return res;      
+      const res = await Login(email, password)
+      router.push('/');
+      toast.success(res.message)
+      return res;
     }catch (error: any) {
-      console.error("Failed to login: ", error.message)
+      toast.error(error.message)
     }  
 
   }
