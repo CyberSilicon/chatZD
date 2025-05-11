@@ -1,4 +1,4 @@
-import { applyUserHooks } from '../triggers/user.trigger';
+import { applyUserHooks } from '../hooks/user.hook';
 import { Schema, model, Document } from 'mongoose';
 
 export interface IUser extends Document {
@@ -17,14 +17,12 @@ const UserSchema = new Schema<IUser>(
       required: true,
       unique: true,
       trim: true,
-      maxlength: 50,
     },
     username: {
       type: String,
       unique: true,
       sparse: true,
       trim: true,
-      maxlength: 32,
     },
     password: {
       type: String,

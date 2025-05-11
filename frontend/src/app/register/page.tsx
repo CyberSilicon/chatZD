@@ -26,7 +26,6 @@ export default function RegisterPage() {
       toast.error(error.message || 'Unknown error.');
     }
   };
-
   return (
     <RegisterForm
       formUserData={formUserData}
