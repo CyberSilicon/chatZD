@@ -1,7 +1,6 @@
 import { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { Profile } from '../models/profile.model';
-import { handleGlobalErrors } from '../middlewares/handleErrors.middleware';
 import { errorHandler } from '../utils/errors/errorHandler.util';
 
 /**

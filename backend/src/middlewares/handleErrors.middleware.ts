@@ -14,14 +14,14 @@ export const handleGlobalErrors = (
   res: Response,
   next: NextFunction
 ): any => {
-  let status = 500;
-  let message = "Une erreur interne est survenue.";
+  let status = err.status || 500;
+  let message = err.message || "Une erreur interne est survenue.";
   const response: Record<string, any> = {};
+
   switch (true) {
-    case err.name === "ValidationError":
-      status = 422;
-      message = err.message;
-      response.errors = err.errors;
+    // Priorité aux erreurs personnalisées
+    case !!err.status && !!err.message:
+      // Déjà défini au-dessus
       break;
 
     case (err as MongoServerError).code === 11000:
@@ -33,20 +33,15 @@ export const handleGlobalErrors = (
           : `Le champ "${duplicateKey}" est déjà utilisé.`;
       break;
 
-    case err.name === "JsonWebTokenError":
-      status = 401;
-      message = "Le token fourni est invalide.";
+    case err.name === "ValidationError":
+      status = 422;
+      message = "Erreur de validation des données.";
+      response.errors = err.errors;
       break;
 
-    case err.name === "TokenExpiredError":
-      status = 401;
-      message = "La session a expiré. Veuillez vous reconnecter.";
-      break;
-
-    case !!err.status && !!err.message:
-      status = err.status!;
-      message = err.message;
-      break;
+    default:
+      status = 500;
+      message = "Une erreur interne est survenue.";
   }
 
   // Optionnel : log en développement

@@ -15,14 +15,31 @@ import { errorHandler } from "../../utils/errors/errorHandler.util";
 export const validateRegister = (req: Request, res: Response, next: NextFunction) => {
     const { email, username, password } = req.body;
 
-    if (!email || !password) {
-        throw new errorHandler("Veuillez fournir un email et un mot de passe.", 400);
+    // Validation du corps de la requête
+    if (!email || !password || !username) {
+        throw new errorHandler("Tous les champs (email, username, password) sont requis.", 400);
     }
-    if (!username || username.length < 3) {
-        throw new errorHandler("Le nom d'utilisateur doit contenir au moins 3 caractères.", 400);
+
+    // Validation de l'email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        throw new errorHandler("Format d'email invalide.", 400);
     }
-    if (!password || password.length < 6) {
-        throw new errorHandler("Le mot de passe doit contenir au moins 6 caractères.", 400);
+
+    // Validation du nom d'utilisateur
+    if (username.length < 3 || username.length > 32) {
+        throw new errorHandler("Le nom d'utilisateur doit contenir entre 3 et 32 caractères.", 400);
+    }
+
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(username)) {
+        throw new errorHandler("Le nom d'utilisateur ne peut contenir que des lettres, chiffres et underscores.", 400);
+    }
+
+    // Validation du mot de passe
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+        throw new errorHandler("Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.", 400);
     }
 
     next();

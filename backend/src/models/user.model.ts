@@ -14,23 +14,19 @@ const UserSchema = new Schema<IUser>(
   {
     email: {
       type: String,
-      required: [true, "L'adresse email est obligatoire."],
+      required: true,
       unique: true,
       trim: true,
-      maxlength: [50, "L'adresse email ne peut pas dépasser 50 caractères."],
     },
     username: {
       type: String,
       unique: true,
       sparse: true,
       trim: true,
-      maxlength: [32, "Le nom d'utilisateur ne peut pas dépasser 32 caractères."],
-      minlength: [3, "Le nom d'utilisateur doit contenir au moins 3 caractères."],
     },
     password: {
       type: String,
-      required: [true, "Le mot de passe est requis."],
-      minlength: [8, "Le mot de passe doit contenir au moins 8 caractères."],
+      required: true,
     },
     lastSeen: {
       type: Date,
