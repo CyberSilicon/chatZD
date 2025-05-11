@@ -16,7 +16,7 @@ export const Register = async (username: String, email: String, password: String
     }),
   });
   const data = await response.json();
-  if (response.status !== 201) {
+  if (response.status !== 201 && response.status !== 200) {
     throw new Error(data.message || "Something went wrong!")
   }
   return data;
