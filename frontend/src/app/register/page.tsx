@@ -17,6 +17,7 @@ export default function page() {
     try {
       const { username, email, password } = formUserData
       const res = await SubmitNewUser(username, email, password)
+      console.log(res)
       return res;
     }catch (error: any) {
       console.error("Failed to register ", error.message)
