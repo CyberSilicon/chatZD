@@ -43,7 +43,6 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
   try {
     const { email, password } = req.body;
     const { user } = await loginUser(email, password, res);
-
     sendSuccess(res, { user }, "Login successful.", 200);
   } catch (error) {
     next(error);
