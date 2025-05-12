@@ -42,9 +42,9 @@ export const register = async (req: Request, res: Response, next: NextFunction):
 export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { email, password } = req.body;
-    const { user, token } = await loginUser(email, password, res);
+    const { user } = await loginUser(email, password, res);
 
-    sendSuccess(res, { token, user }, "Login successful.", 200);
+    sendSuccess(res, { user }, "Login successful.", 200);
   } catch (error) {
     next(error);
   }
