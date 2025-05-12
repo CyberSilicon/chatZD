@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { Base_URL } from "./constants";
 
 
@@ -6,6 +7,7 @@ export const Register = async (username: String, email: String, password: String
     method: "POST",
     headers: {
       Accept: "application/json",
+      credientials: "include",
       "Content-type": "application/json"
     },
     body: JSON.stringify({
@@ -19,12 +21,14 @@ export const Register = async (username: String, email: String, password: String
     throw new Error(data.message || "Something went wrong!")
   }
   return data;
+}
 
 export const Login = async (email: String, password: String) => {
   const response = await fetch(`${Base_URL}/auth/login`, {
     method: "POST",
     headers: {
       Accept: "application/json",
+      credentials: "include",
       "Content-type": "application/json"
     },
     body: JSON.stringify({
@@ -35,3 +39,15 @@ export const Login = async (email: String, password: String) => {
   return await response.json();
 };
 
+export const Logout = async () => {
+  const response = await fetch(`${Base_URL}/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+      "Content-type": "application/json"
+    },
+  });
+  const data = await response.json();
+  return data;
+}
