@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { loginUser, registerUser } from '../services/auth.service';
 import { sendSuccess } from '../utils/http/successResponse.util';
+import { ENV } from '../config/env';
 
 /**
  * Handles user registration by creating a new user in the database.
@@ -22,7 +23,7 @@ import { sendSuccess } from '../utils/http/successResponse.util';
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     await registerUser(req.body);
-    const login: any = await loginUser(req.body.email, req.body.password);
+    const login: any = await loginUser(req.body.email, req.body.password, res);
     sendSuccess(res, login, "User successfully created and logged in.", 201);
   } catch (error: any) {
     next(error);
@@ -41,10 +42,30 @@ export const register = async (req: Request, res: Response, next: NextFunction):
 export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { email, password } = req.body;
-    const { user } = await loginUser(email, password);
-
+    const { user } = await loginUser(email, password, res);
     sendSuccess(res, { user }, "Login successful.", 200);
   } catch (error) {
     next(error);
   }
 };
+/**
+ * Handles user logout by clearing the authentication token from the cookies.
+ *
+ * @param req - The HTTP request object.
+ * @param res - The HTTP response object used to send the response.
+ * @returns A Promise that resolves to void.
+ *
+ * @throws {Error} If there is an issue with the logout process, a 500 status code and error message are returned.
+ */
+
+// controllers/auth.controller.ts
+
+export const logout = (req: Request, res: Response): void => {
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: ENV.NODE_ENV !== "dev",
+    sameSite: "strict",
+  });
+  res.status(200).json({ message: "Logout successful" }); 
+};
+

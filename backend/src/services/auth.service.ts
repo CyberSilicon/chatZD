@@ -1,6 +1,7 @@
 import { IUser, User } from "../models/user.model";
 import { errorHandler } from "../utils/errors/errorHandler.util";
 import { generateToken, verifyPassword } from "../utils/auth/auth.utils";
+import { Response } from "express";
 
 /**
  * Authenticates a user by verifying their email and password, and generates a token upon successful authentication.
@@ -10,7 +11,7 @@ import { generateToken, verifyPassword } from "../utils/auth/auth.utils";
  * @returns An object containing the authenticated user and a generated token.
  * @throws Will throw an error if the email is not found or the password does not match.
  */
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (email: string, password: string, response: Response) => {
   const user = await User.findOne({ email });
   if (!user) {
     throw new errorHandler("Email ou mot de passe incorrect.", 401);
@@ -21,9 +22,8 @@ export const loginUser = async (email: string, password: string) => {
     throw new errorHandler("Email ou mot de passe incorrect.", 401);
   }
 
-  const token = generateToken({ id: user._id, email: user.email });
+  const token = generateToken({ id: user._id, email: user.email}, response);
 
-  
 
   return { user, token };
 };
