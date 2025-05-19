@@ -5,11 +5,11 @@ import {
   updateProfileById,
   deleteProfileById,
 } from '../controllers/profile.controller';
-import { authenticateJWT } from '../middlewares/auth/jwt.middleware';
+import { isAuthenticated } from '../middlewares/auth/auth.middleware';
 
 const router = Router();
 
-router.get('/profile', authenticateJWT, getProfileById);
+router.get('/profile', isAuthenticated, getProfileById);
 router.post('/profile', createProfile);
 router.put('/profile', updateProfileById);
 router.delete('/profile' ,deleteProfileById);

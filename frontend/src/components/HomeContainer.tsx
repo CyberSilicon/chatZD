@@ -10,7 +10,7 @@ export default function HomeContainer() {
   const handleLogout = async () => {
     const result = await Logout();
 
-    if (result.message) {
+    if (result.user) {
       console.log(result.message); // ✅ Affiche le message de la réponse
       toast.success(result.message); // ✅ Affiche le toast
       router.push('/login')

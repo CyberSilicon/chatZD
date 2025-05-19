@@ -2,6 +2,8 @@ import { IUser, User } from "../models/user.model";
 import { errorHandler } from "../utils/errors/errorHandler.util";
 import { generateToken, verifyPassword } from "../utils/auth/auth.utils";
 import { Response } from "express";
+import { createSession } from "./session.service";
+import { ENV } from "../config/env";
 
 /**
  * Authenticates a user by verifying their email and password, and generates a token upon successful authentication.
@@ -12,6 +14,7 @@ import { Response } from "express";
  * @throws Will throw an error if the email is not found or the password does not match.
  */
 export const loginUser = async (email: string, password: string, response: Response) => {
+
   const user = await User.findOne({ email });
   if (!user) {
     throw new errorHandler("Email ou mot de passe incorrect.", 401);
@@ -24,6 +27,25 @@ export const loginUser = async (email: string, password: string, response: Respo
 
   const token = generateToken({ id: user._id, email: user.email}, response);
 
+  const session = await createSession({
+    userId: (user._id as string | { toString(): string }).toString(),
+    ipAddress: response.req.ip || "Unknown",
+    deviceInfo: response.req.headers["user-agent"] || "Unknown",
+  });
+
+  response.cookie("user_session_id", session.sessionId, {
+    httpOnly: true,
+    secure: ENV.NODE_ENV !== "dev",
+    sameSite: "strict",
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+  }).json({
+    message: "Login successful, Session started...",
+    user: {
+      id: user._id,
+      email: user.email,
+      // role: user.role,
+    },
+  });
 
   return { user, token };
 };

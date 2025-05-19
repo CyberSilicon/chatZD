@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { loginUser, registerUser } from '../services/auth.service';
 import { sendSuccess } from '../utils/http/successResponse.util';
 import { ENV } from '../config/env';
+import { deleteSession } from '../services/session.service';
 
 /**
  * Handles user registration by creating a new user in the database.
@@ -60,12 +61,24 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
 
 // controllers/auth.controller.ts
 
-export const logout = (req: Request, res: Response): void => {
-  res.clearCookie("jwt", {
-    httpOnly: true,
-    secure: ENV.NODE_ENV !== "dev",
-    sameSite: "strict",
-  });
-  res.status(200).json({ message: "Logout successful" }); 
+export const logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const sessionId = req.cookies?.user_session_id;
+    if(sessionId){
+      await deleteSession(sessionId);
+    }
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: ENV.NODE_ENV !== "dev",
+      sameSite: "strict",
+    });
+    res.clearCookie("user_session_id", {
+      httpOnly: true,
+      secure: ENV.NODE_ENV !== "dev",
+      sameSite: "strict",
+    });
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    next(error);
+  }
 };
-
