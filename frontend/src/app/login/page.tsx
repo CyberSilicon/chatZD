@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import { Login } from '@/api/helper'
 import { useRouter } from 'next/navigation'
 
-export default function page( ) {
+export default function page() {
   const router = useRouter();
 
   const { formUserData, handleChange } = useFormHandler({
@@ -18,13 +18,15 @@ export default function page( ) {
     try {
       const { email, password } = formUserData
       const res = await Login(email, password)
-      router.push('/');
-      toast.success(res.message)
-      return res;
-    }catch (error: any) {
-      toast.error(error.message)
-    }  
-
+      if (res.user) { // Vérifie si la connexion a réussi (adapte selon ton API)
+        router.push('/');
+        toast.success(res.message || 'Login successful');
+            } else {
+        toast.error(res.message || 'Login failed');
+            }
+          } catch (error: any) {
+            toast.error(error.message || 'An error occurred');
+    }
   }
 
   return (
