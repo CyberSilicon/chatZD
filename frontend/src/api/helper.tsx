@@ -50,15 +50,15 @@ export const Logout = async () => {
   return data;
 }
 
-// export const getSessions = async () => {
-//   const response = await fetch(`${Base_URL}/session`, {
-//     method: "GET",
-//     credentials: "include",         // ← pour que cookie soit envoyé
-//     headers: { "Content-Type": "application/json" },
-//   });
-//   // if (!response.ok) {
-//   //   throw new Error("Impossible de récupérer les sessions");
-//   // }
-//   const sessionData = await response.json();
-//   return sessionData;  
-// };
+export const getSessions = async () => {
+  const response = await fetch(`${Base_URL}/session`, {
+    method: "GET",
+    credentials: "include",         // ← pour que cookie soit envoyé
+    headers: { "Content-Type": "application/json" },
+  });
+  // if (!response.ok) {
+  //   throw new Error("Impossible de récupérer les sessions");
+  // }
+  const sessionData = await response.json();
+  return sessionData;  
+};

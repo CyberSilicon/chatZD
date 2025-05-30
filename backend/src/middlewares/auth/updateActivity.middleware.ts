@@ -13,6 +13,7 @@ export const updateActivity = async (
   next: NextFunction
 ) => {
   try {
+    console.log('updateActivity middleware called');
     const sessionId = req.cookies?.session_id;
     if (sessionId) {
       await updateSessionActivity(sessionId as string);

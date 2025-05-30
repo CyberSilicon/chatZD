@@ -40,10 +40,10 @@ export const generateToken = (payload: { id: any; email: string }, res: Response
     expiresIn: ENV.JWT_EXPIRES_IN,
   });
 
-  res.cookie("jwt", token, {
+  res.cookie("token", token, {
     httpOnly: true,
     secure: ENV.NODE_ENV !== "dev",
-    sameSite: "strict",
+    sameSite: "lax",
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   });
   return token;

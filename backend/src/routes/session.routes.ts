@@ -11,8 +11,8 @@ const router = express.Router();
 
 router.use(updateActivity);
 
-router.get("/session", getSessions);
-router.post("/session",  startSession);
-router.delete("session/:id", endSession);
+router.get("/session", isAuthenticated, getSessions);
+router.post("/session", isAuthenticated, startSession);
+router.delete("session/:id", isAuthenticated, endSession);
 
 export default router;

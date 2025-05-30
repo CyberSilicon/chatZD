@@ -33,10 +33,10 @@ export const loginUser = async (email: string, password: string, response: Respo
     deviceInfo: response.req.headers["user-agent"] || "Unknown",
   });
 
-  response.cookie("user_session_id", session.sessionId, {
+  response.cookie("session_id", session.sessionId, {
     httpOnly: true,
     secure: ENV.NODE_ENV !== "dev",
-    sameSite: "strict",
+    sameSite: "lax",
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   }).json({
     message: "Login successful, Session started...",

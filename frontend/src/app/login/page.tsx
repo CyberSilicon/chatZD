@@ -18,7 +18,7 @@ export default function page() {
     try {
       const { email, password } = formUserData
       const res = await Login(email, password)
-      if (res.user) { // Vérifie si la connexion a réussi (adapte selon ton API)
+      if (res.user) {
         router.push('/');
         toast.success(res.message || 'Login successful');
             } else {
